@@ -1,0 +1,6 @@
+@CatBoxAPI_HostAddress = http://localhost:5157
+
+GET {{CatBoxAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
