@@ -15,6 +15,14 @@ public class CatBoxContext(DbContextOptions<CatBoxContext> options) : DbContext(
             .HasColumnType("Decimal")
             .HasPrecision(4, 2);
 
+        builder.Entity<CatProfileEntity>().Property(e => e.CreatedAt)
+            .HasDefaultValueSql("GETUTCDATE()");
+
         builder.Entity<CatProfileEntity>();
+
+        builder.Entity<BoxRegistration>().Property(e => e.CreatedAt)
+            .HasDefaultValueSql("GETUTCDATE()");
+
+        builder.Entity<BoxRegistration>();
     }
 }
