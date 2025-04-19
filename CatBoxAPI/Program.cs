@@ -1,4 +1,7 @@
 
+using CatBoxAPI.DB;
+using CatBoxAPI.Services;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 namespace CatBoxAPI
@@ -14,6 +17,11 @@ namespace CatBoxAPI
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+
+            builder.Services.AddDbContext<CatBoxContext>(options => 
+                options.UseSqlServer(builder.Configuration.GetConnectionString("CatBoxDatabase")));
+
+            builder.Services.AddScoped<ICatProfileService, CatProfileService>();
 
             var app = builder.Build();
 
