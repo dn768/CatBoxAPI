@@ -6,6 +6,7 @@ namespace CatBoxAPI.DB;
 public class CatBoxContext(DbContextOptions<CatBoxContext> options) : DbContext(options)
 {
     public DbSet<CatProfileEntity> CatProfiles { get; set; } = null!;
+    public DbSet<BoxRegistration> BoxRegistrations { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
