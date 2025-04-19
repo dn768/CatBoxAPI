@@ -6,4 +6,5 @@ public interface ICatProfileService
 {
     Task<Guid> CreateCatProfileAsync(CatProfileCreationDTO catProfile);
     Task UpdateCatProfileAsync(CatProfileEditDTO catProfile);
+    Task DeleteCatProfileAsync(Guid id);
 }

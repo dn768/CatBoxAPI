@@ -40,4 +40,13 @@ public class CatProfileService(CatBoxContext catBoxDb) : ICatProfileService
         
         await catBoxDb.SaveChangesAsync();
     }
+
+    public async Task DeleteCatProfileAsync(Guid id)
+    {
+        var catProfileEntity = await catBoxDb.CatProfiles.FirstOrDefaultAsync(p => p.Id == id)
+            ?? throw new UserFriendlyException($"Cat profile with id {id} not found.");
+
+        catBoxDb.CatProfiles.Remove(catProfileEntity);
+        await catBoxDb.SaveChangesAsync();
+    }
 }
