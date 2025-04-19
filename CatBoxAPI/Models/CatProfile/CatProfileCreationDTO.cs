@@ -8,7 +8,7 @@ public class CatProfileCreationDTO
     public string? Nickname { get; set; }
     public int Age { get; set; }
     public required string Color { get; set; }
-    public decimal Weight { get; set; }
+    public decimal? Weight { get; set; }
     public required string Sex { get; set; }
     public required string PurrferedBoxSize { get; set; }
 
