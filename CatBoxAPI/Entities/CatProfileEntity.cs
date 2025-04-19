@@ -11,6 +11,6 @@ public class CatProfileEntity
     public int Age { get; set; }
     public required string Color { get; set; }
     public decimal Weight { get; set; }
-    public required Gender Sex { get; set; }
+    public required string Sex { get; set; }
     public required BoxSize PurrferedBoxSize { get; set; }
 }
