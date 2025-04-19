@@ -1,5 +1,6 @@
 ﻿using CatBoxAPI.DB;
 using CatBoxAPI.DB.Entities;
+using CatBoxAPI.Enums;
 using CatBoxAPI.Models.CatProfile;
 using Microsoft.EntityFrameworkCore;
 
@@ -48,5 +49,42 @@ public class CatProfileService(CatBoxContext catBoxDb) : ICatProfileService
 
         catBoxDb.CatProfiles.Remove(catProfileEntity);
         await catBoxDb.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<CatProfileListItemDTO>> GetCatProfileListAsync(BoxSize? filterBySize, bool? sortByAge)
+    {
+        var query = catBoxDb.CatProfiles.AsQueryable();
+        
+        if (filterBySize.HasValue)
+        {
+            query = query.Where(p => p.PurrferedBoxSize == filterBySize);
+        }
+        
+        if (sortByAge.HasValue)
+        {
+            query = sortByAge.Value ?
+                query.OrderBy(p => p.Age) :
+                query.OrderByDescending(p => p.Age);
+        }
+
+        var catProfiles = await query.ToListAsync();
+        
+        List<CatProfileListItemDTO> resultList = [];
+        catProfiles.ForEach(p =>
+        {
+            resultList.Add(new()
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Nickname = p.Nickname,
+                Age = p.Age,
+                Color = p.Color,
+                Weight = p.Weight,
+                Sex = p.Sex,
+                PurrferedBoxSize = p.PurrferedBoxSize.ToString(),
+            });
+        });
+
+        return resultList;
     }
 }
