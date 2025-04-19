@@ -12,7 +12,7 @@ public class CatProfileController(ICatProfileService catProfileService) : Contro
     private readonly ICatProfileService _catProfileService = catProfileService;
 
     [HttpPost]
-    public async Task<IActionResult> Register(CatProfileCreationDTO profile, IWebHostEnvironment webHostEnvironment)
+    public async Task<IActionResult> Create(CatProfileCreationDTO profile, IWebHostEnvironment webHostEnvironment)
     {
         if (profile.Name.Trim() == "")
             return BadRequest("Name is required.");
@@ -35,7 +35,7 @@ public class CatProfileController(ICatProfileService catProfileService) : Contro
         if (profile.Sex.Trim() == "")
             return BadRequest("Sex is required.");
 
-        if (!Enum.TryParse(profile.PurrferedBoxSize, out BoxSize _))
+        if (!Enum.TryParse(profile.PurrferedBoxSize, true, out BoxSize _))
             return BadRequest($"PurrferedBoxSize should be one of these values: {string.Join(", ", Enum.GetValues<BoxSize>())}");
 
         Guid id;
@@ -65,7 +65,7 @@ public class CatProfileController(ICatProfileService catProfileService) : Contro
         if (profile.Weight > 65)
             return BadRequest("Cats should not weigh more than 65 lbs.");
 
-        if (!Enum.TryParse(profile.PurrferedBoxSize, out BoxSize _))
+        if (!Enum.TryParse(profile.PurrferedBoxSize, true, out BoxSize _))
             return BadRequest($"PurrferedBoxSize should be one of these values: {string.Join(", ", Enum.GetValues<BoxSize>())}");
 
         try

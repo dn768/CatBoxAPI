@@ -9,7 +9,7 @@ public class CatProfileDTOBase
     // TODO: Consider using a custom JsonConverter, or some form of type converter. At least move this to an extension method.
     public BoxSize GetBoxSize()
     {
-        if (Enum.TryParse(PurrferedBoxSize, out BoxSize size))
+        if (Enum.TryParse(PurrferedBoxSize, true, out BoxSize size))
             return size;
         else
             throw new Exception($"PurrferedBoxSize was not a valid enum value: {PurrferedBoxSize}");
