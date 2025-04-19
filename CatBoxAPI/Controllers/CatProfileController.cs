@@ -75,13 +75,34 @@ public class CatProfileController(ICatProfileService catProfileService) : Contro
         catch (Exception ex)
         {
             if (ex is UserFriendlyException fe)
-                return BadRequest(fe.Message);
+                return NotFound(fe.Message);
 
             string errorMessage = webHostEnvironment.IsDevelopment() ? $"\r\n{ex.Message}\r\n{ex.InnerException}" : "";
 
-            return Problem($"Cat profile registration encountered an error.{errorMessage}");
+            return Problem($"Cat profile update encountered an error.{errorMessage}");
         }
 
+        return Ok();
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> Delete(Guid id, IWebHostEnvironment webHostEnvironment)
+    {
+        if (id == Guid.Empty)
+            return BadRequest("Id is required.");
+
+        try
+        {
+            await _catProfileService.DeleteCatProfileAsync(id);
+        }
+        catch (Exception ex)
+        {
+            if (ex is UserFriendlyException fe)
+                return NotFound(fe.Message);
+
+            string errorMessage = webHostEnvironment.IsDevelopment() ? $"\r\n{ex.Message}\r\n{ex.InnerException}" : "";
+            return Problem($"Cat profile deletion encountered an error.{errorMessage}");
+        }
         return Ok();
     }
 }
