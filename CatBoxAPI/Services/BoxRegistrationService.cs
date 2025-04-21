@@ -4,6 +4,7 @@ using CatBoxAPI.Enums;
 using CatBoxAPI.Extensions;
 using CatBoxAPI.Models.BoxRegistration;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 
 namespace CatBoxAPI.Services;
 
@@ -52,12 +53,22 @@ public class BoxRegistrationService(CatBoxContext catBoxDb) : IBoxRegistrationSe
         return registration.Id;
     }
 
-    public async Task<IEnumerable<BoxRegistrationListItemDTO>> GetBoxRegistrationListAsync(bool filterByApproval, bool? approvalFilter)
+    public async Task<IEnumerable<BoxRegistrationListItemDTO>> GetBoxRegistrationListAsync(bool filterByApproval, bool? approvalFilter, ListSortDirection? sortByBoxSize)
     {
-        var registrations = await _catBoxDb.BoxRegistrations
+        var registrationQuery = _catBoxDb.BoxRegistrations
             .Include(r => r.Cat)
-            .Where(r => !filterByApproval || r.IsApproved == approvalFilter)
-            .ToListAsync();
+            .AsQueryable();
+
+        if (filterByApproval)
+            registrationQuery = registrationQuery.Where(r => r.IsApproved == approvalFilter);
+
+        if (sortByBoxSize == ListSortDirection.Ascending)
+            registrationQuery = registrationQuery.OrderBy(r => r.BoxSize);
+
+        else if (sortByBoxSize == ListSortDirection.Descending)
+            registrationQuery = registrationQuery.OrderByDescending(r => r.BoxSize);
+
+        var registrations = await registrationQuery.ToListAsync();
 
         return registrations.Select(r => new BoxRegistrationListItemDTO()
         {
