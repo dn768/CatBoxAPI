@@ -12,6 +12,9 @@ public class BoxRegistration
     public required string BoxType { get; set; }
     public required BoxSize BoxSize { get; set; }
     public string? SpecialFeatures { get; set; }
-    public bool IsApproved { get; set; } = false;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public bool? IsApproved { get; set; } = false;
+    public string? DecisionReason { get; set; }
+    public DateTime? DecidedOn { get; set; }
 }

@@ -7,5 +7,5 @@ public class BoxRegistrationListItemDTO
     public required string BoxType { get; set; }
     public required string BoxSize { get; set; }
     public string? SpecialFeatures { get; set; }
-    public required bool IsApproved { get; set; }
+    public required bool? IsApproved { get; set; }
 }

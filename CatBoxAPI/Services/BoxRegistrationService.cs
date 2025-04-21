@@ -52,11 +52,11 @@ public class BoxRegistrationService(CatBoxContext catBoxDb) : IBoxRegistrationSe
         return registration.Id;
     }
 
-    public async Task<IEnumerable<BoxRegistrationListItemDTO>> GetBoxRegistrationListAsync(bool? isApproved)
+    public async Task<IEnumerable<BoxRegistrationListItemDTO>> GetBoxRegistrationListAsync(bool filterByApproval, bool? approvalFilter)
     {
         var registrations = await _catBoxDb.BoxRegistrations
             .Include(r => r.Cat)
-            .Where(r => isApproved == null || r.IsApproved == isApproved)
+            .Where(r => !filterByApproval || r.IsApproved == approvalFilter)
             .ToListAsync();
 
         return registrations.Select(r => new BoxRegistrationListItemDTO()
@@ -68,5 +68,18 @@ public class BoxRegistrationService(CatBoxContext catBoxDb) : IBoxRegistrationSe
             SpecialFeatures = r.SpecialFeatures,
             IsApproved = r.IsApproved,
         });
+    }
+
+    public async Task SaveRegistrationApproval(Guid registrationId, bool isApproved, string? decisionReason)
+    {
+        var registration = await _catBoxDb.BoxRegistrations.FindAsync(registrationId);
+        
+        if (registration == null)
+            throw new UserFriendlyException($"Box registration with id {registrationId} not found.");
+        
+        registration.IsApproved = isApproved;
+        registration.DecidedOn = DateTime.UtcNow;
+        registration.DecisionReason = decisionReason;
+        _catBoxDb.SaveChanges();
     }
 }
