@@ -12,26 +12,24 @@ public class BoxRegistrationService(CatBoxContext catBoxDb) : IBoxRegistrationSe
     
     public async Task<Guid> CreateAsync(BoxRegistrationCreationDTO boxRegistration)
     {
+        // TODO: Save BoxRegistration without getting the CatProfileEntity first. Return the error on foreign key violation
+        var cat = await _catBoxDb.CatProfiles.FindAsync(boxRegistration.CatId);
+
+        if (cat == null)
+            throw new UserFriendlyException($"Cat profile with id {boxRegistration.CatId} not found.");
+
         var boxRegistrationEntity = new BoxRegistration()
         {
             Id = Guid.NewGuid(),
-            Cat = new CatProfileEntity()
-            {
-                Id = boxRegistration.CatId,
-                // TODO: Improve this. This shouldn't end up in the database anyway, but it's ugly and risky.
-                Name = "",
-                Color = "",
-                PurrferedBoxSize = BoxSize.Small,
-                Sex = "",
-            },
+            Cat = cat,
             BoxType = boxRegistration.BoxType,
             BoxSize = boxRegistration.BoxSize.GetBoxSize(),
             SpecialFeatures = boxRegistration.SpecialFeatures,
             IsApproved = false,
             CreatedAt = DateTime.UtcNow,
         };
-        
-        await _catBoxDb.BoxRegistrations.AddAsync(boxRegistrationEntity);
+
+        await _catBoxDb.AddAsync(boxRegistrationEntity);
         await _catBoxDb.SaveChangesAsync();
 
         return boxRegistrationEntity.Id;

@@ -9,6 +9,6 @@ public static class StringExtensions
         if (Enum.TryParse(boxSize, true, out BoxSize size))
             return size;
         else
-            throw new Exception($"PurrferedBoxSize was not a valid enum value: {boxSize}");
+            throw new UserFriendlyException($"Box size was not a valid enum value: {boxSize}. Box size must be one of these values: {string.Join(", ", Enum.GetValues<BoxSize>())}");
     }
 }

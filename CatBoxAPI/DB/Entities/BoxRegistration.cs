@@ -1,9 +1,10 @@
 ﻿using CatBoxAPI.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CatBoxAPI.DB.Entities;
 
-// Omitting the Entity suffix and [Table] attribute this time around, since I used a DTO suffix for models/DTOs
 // TODO: Probably rename CatProfileEntity to CatProfile or just Cat
+[Table(nameof(BoxRegistration))]
 public class BoxRegistration
 {
     public required Guid Id { get; set; }
