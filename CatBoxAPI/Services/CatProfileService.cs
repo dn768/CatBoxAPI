@@ -1,6 +1,7 @@
 ﻿using CatBoxAPI.DB;
 using CatBoxAPI.DB.Entities;
 using CatBoxAPI.Enums;
+using CatBoxAPI.Extensions;
 using CatBoxAPI.Models.CatProfile;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,7 +22,7 @@ public class CatProfileService(CatBoxContext catBoxDb) : ICatProfileService
             Color = catProfile.Color,
             Sex = catProfile.Sex,
             Weight = catProfile.Weight,
-            PurrferedBoxSize = catProfile.GetBoxSize(),
+            PurrferedBoxSize = catProfile.PurrferedBoxSize.GetBoxSize(),
         };
 
         await catBoxDb.CatProfiles.AddAsync(catProfileEntity);
@@ -37,7 +38,7 @@ public class CatProfileService(CatBoxContext catBoxDb) : ICatProfileService
         
         catProfileEntity.Nickname = catProfile.Nickname;
         catProfileEntity.Weight = catProfile.Weight;
-        catProfileEntity.PurrferedBoxSize = catProfile.GetBoxSize();
+        catProfileEntity.PurrferedBoxSize = catProfile.PurrferedBoxSize.GetBoxSize();
         
         await catBoxDb.SaveChangesAsync();
     }

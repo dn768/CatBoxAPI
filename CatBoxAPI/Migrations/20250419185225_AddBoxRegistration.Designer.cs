@@ -4,6 +4,7 @@ using CatBoxAPI.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CatBoxAPI.Migrations
 {
     [DbContext(typeof(CatBoxContext))]
-    partial class CatBoxContextModelSnapshot : ModelSnapshot
+    [Migration("20250419185225_AddBoxRegistration")]
+    partial class AddBoxRegistration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,13 +46,7 @@ namespace CatBoxAPI.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
-                    b.Property<DateTime?>("DecidedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DecisionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("IsApproved")
+                    b.Property<bool>("IsApproved")
                         .HasColumnType("bit");
 
                     b.Property<string>("SpecialFeatures")

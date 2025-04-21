@@ -22,6 +22,7 @@ namespace CatBoxAPI
                 options.UseSqlServer(builder.Configuration.GetConnectionString("CatBoxDatabase")));
 
             builder.Services.AddScoped<ICatProfileService, CatProfileService>();
+            builder.Services.AddScoped<IBoxRegistrationService, BoxRegistrationService>();
 
             var app = builder.Build();
 
