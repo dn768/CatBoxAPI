@@ -1,6 +1,7 @@
 ﻿using CatBoxAPI.Models.BoxRegistration;
 using CatBoxAPI.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace CatBoxAPI.Controllers
@@ -59,7 +60,7 @@ namespace CatBoxAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BoxRegistrationListItemDTO>>> GetBoxRegistrationList([FromQuery] string? filter)
+        public async Task<ActionResult<IEnumerable<BoxRegistrationListItemDTO>>> GetBoxRegistrationList([FromQuery] string? filter, [FromQuery] string? sort)
         {
             // Updated filter to be consistent with CatProfileController, since I'm letting the endpoint consumer use these 4 filter states:
             // 1. No filter (all BoxResistrations returned)
@@ -88,9 +89,21 @@ namespace CatBoxAPI.Controllers
                     approvalFilter = true;
             }
 
+            ListSortDirection? sortByBoxSize = null;
+            if (!string.IsNullOrEmpty(sort?.Trim()))
+            {
+                if (!sort.Trim().StartsWith("boxsize", StringComparison.CurrentCultureIgnoreCase))
+                    return BadRequest($"Sorting feature is provided only for BoxSize.");
+
+                if (sort.Trim().EndsWith("desc", StringComparison.CurrentCultureIgnoreCase))
+                    sortByBoxSize = ListSortDirection.Descending;
+                else
+                    sortByBoxSize = ListSortDirection.Ascending;
+            }
+
             try
             {
-                return Ok(await boxRegistrationService.GetBoxRegistrationListAsync(filterByApproval, approvalFilter));
+                return Ok(await boxRegistrationService.GetBoxRegistrationListAsync(filterByApproval, approvalFilter, sortByBoxSize));
             }
             catch (Exception ex)
             {
@@ -99,6 +112,7 @@ namespace CatBoxAPI.Controllers
             }
         }
 
+        // Used query parameters on the endpoint method instead of a request DTO for simplicity
         [HttpPatch]
         public async Task<IActionResult> ApplyDecision(
             [FromQuery]
