@@ -78,15 +78,14 @@ namespace CatBoxAPI.Controllers
                 if (!filter.Trim().StartsWith("approved", StringComparison.CurrentCultureIgnoreCase))
                     return BadRequest($"Filter feature is provided only for approved state.");
 
-                if (filter.Trim().EndsWith("true", StringComparison.CurrentCultureIgnoreCase))
-                    approvalFilter = true;
+                if (filter.Trim().EndsWith("null", StringComparison.CurrentCultureIgnoreCase))
+                    approvalFilter = null;
                 else if (filter.Trim().EndsWith("false", StringComparison.CurrentCultureIgnoreCase))
                     approvalFilter = false;
-                // Including else statement for readability, but the bool? was initialized to null
+                // Defaulting to true since the filter name is "approved", enabling the consumer to use /?filter=approved directly and intuitively
                 else
-                    approvalFilter = null;
+                    approvalFilter = true;
             }
-
 
             try
             {
