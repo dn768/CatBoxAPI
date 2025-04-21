@@ -32,5 +32,29 @@ namespace CatBoxAPI.Controllers
                 return Problem($"Cat box registration request encountered an error{errorMessage}");
             }
         }
+
+        [HttpPatch]
+        public async Task<IActionResult> Update(BoxRegistrationEditDTO registration)
+        {
+            if (registration.Id == Guid.Empty)
+                return BadRequest("Cat Box Registration Id is required.");
+
+            if (string.IsNullOrEmpty(registration.BoxType?.Trim()))
+                return BadRequest("Box type is required.");
+            
+            try
+            {
+                await boxRegistrationService.UpdateAsync(registration);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                if (ex is UserFriendlyException)
+                    return NotFound(ex.Message);
+
+                var errorMessage = webHostEnvironment.IsDevelopment() ? $"\r\n{ex.Message}\r\n{ex.InnerException}" : "";
+                return Problem($"Cat box registration request encountered an error{errorMessage}");
+            }
+        }
     }
 }

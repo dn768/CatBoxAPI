@@ -34,4 +34,20 @@ public class BoxRegistrationService(CatBoxContext catBoxDb) : IBoxRegistrationSe
 
         return boxRegistrationEntity.Id;
     }
+
+    public async Task<Guid> UpdateAsync(BoxRegistrationEditDTO boxRegistration)
+    {
+        var registration = await _catBoxDb.BoxRegistrations.FindAsync(boxRegistration.Id);
+
+        if (registration == null)
+            throw new UserFriendlyException($"Box registration with id {boxRegistration.Id} not found.");
+        
+        registration.BoxType = boxRegistration.BoxType;
+        registration.BoxSize = boxRegistration.BoxSize.GetBoxSize();
+        registration.SpecialFeatures = boxRegistration.SpecialFeatures;
+
+        _catBoxDb.SaveChanges();
+        
+        return registration.Id;
+    }
 }
