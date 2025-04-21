@@ -56,5 +56,20 @@ namespace CatBoxAPI.Controllers
                 return Problem($"Cat box registration request encountered an error{errorMessage}");
             }
         }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<BoxRegistrationListItemDTO>>> GetBoxRegistrationList([FromQuery] bool? isApproved)
+        {
+            // Using simpler filtering for this endpoint. Making the assumption for now that additional fields won't be useful to filter by
+            try
+            {
+                return Ok(await boxRegistrationService.GetBoxRegistrationListAsync(isApproved));
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = webHostEnvironment.IsDevelopment() ? $"\r\n{ex.Message}\r\n{ex.InnerException}" : "";
+                return Problem($"Cat box registration request encountered an error{errorMessage}");
+            }
+        }
     }
 }

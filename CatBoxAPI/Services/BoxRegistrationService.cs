@@ -3,6 +3,7 @@ using CatBoxAPI.DB.Entities;
 using CatBoxAPI.Enums;
 using CatBoxAPI.Extensions;
 using CatBoxAPI.Models.BoxRegistration;
+using Microsoft.EntityFrameworkCore;
 
 namespace CatBoxAPI.Services;
 
@@ -49,5 +50,23 @@ public class BoxRegistrationService(CatBoxContext catBoxDb) : IBoxRegistrationSe
         _catBoxDb.SaveChanges();
         
         return registration.Id;
+    }
+
+    public async Task<IEnumerable<BoxRegistrationListItemDTO>> GetBoxRegistrationListAsync(bool? isApproved)
+    {
+        var registrations = await _catBoxDb.BoxRegistrations
+            .Include(r => r.Cat)
+            .Where(r => isApproved == null || r.IsApproved == isApproved)
+            .ToListAsync();
+
+        return registrations.Select(r => new BoxRegistrationListItemDTO()
+        {
+            Id = r.Id,
+            CatId = r.Cat.Id,
+            BoxType = r.BoxType,
+            BoxSize = r.BoxSize.ToString(),
+            SpecialFeatures = r.SpecialFeatures,
+            IsApproved = r.IsApproved,
+        });
     }
 }
