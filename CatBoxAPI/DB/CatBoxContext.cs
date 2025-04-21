@@ -6,6 +6,7 @@ namespace CatBoxAPI.DB;
 public class CatBoxContext(DbContextOptions<CatBoxContext> options) : DbContext(options)
 {
     public DbSet<CatProfileEntity> CatProfiles { get; set; } = null!;
+    public DbSet<BoxRegistration> BoxRegistrations { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -15,6 +16,14 @@ public class CatBoxContext(DbContextOptions<CatBoxContext> options) : DbContext(
             .HasColumnType("Decimal")
             .HasPrecision(4, 2);
 
+        builder.Entity<CatProfileEntity>().Property(e => e.CreatedAt)
+            .HasDefaultValueSql("GETUTCDATE()");
+
         builder.Entity<CatProfileEntity>();
+
+        builder.Entity<BoxRegistration>().Property(e => e.CreatedAt)
+            .HasDefaultValueSql("GETUTCDATE()");
+
+        builder.Entity<BoxRegistration>();
     }
 }

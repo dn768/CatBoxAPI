@@ -14,4 +14,5 @@ public class CatProfileEntity
     public decimal? Weight { get; set; }
     public required string Sex { get; set; }
     public required BoxSize PurrferedBoxSize { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
