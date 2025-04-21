@@ -1,6 +1,7 @@
 ﻿using CatBoxAPI.Models.BoxRegistration;
 using CatBoxAPI.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace CatBoxAPI.Controllers
 {
@@ -95,6 +96,34 @@ namespace CatBoxAPI.Controllers
             {
                 var errorMessage = webHostEnvironment.IsDevelopment() ? $"\r\n{ex.Message}\r\n{ex.InnerException}" : "";
                 return Problem($"Cat box registration request encountered an error{errorMessage}");
+            }
+        }
+
+        [HttpPatch]
+        public async Task<IActionResult> ApplyDecision(
+            [FromQuery]
+            [Required]
+            Guid boxRegistrationId,
+            
+            [FromQuery]
+            [Required]
+            bool isApproved,
+            
+            [FromQuery]
+            string? decisionReason)
+        {
+            try
+            {
+                await boxRegistrationService.SaveRegistrationApproval(boxRegistrationId, isApproved, decisionReason);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                if (ex is UserFriendlyException)
+                    return NotFound(ex.Message);
+
+                var errorMessage = webHostEnvironment.IsDevelopment() ? $"\r\n{ex.Message}\r\n{ex.InnerException}" : "";
+                return Problem($"Applying approval decision to the Cat Box registration request encountered an error{errorMessage}");
             }
         }
     }

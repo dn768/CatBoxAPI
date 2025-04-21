@@ -69,4 +69,17 @@ public class BoxRegistrationService(CatBoxContext catBoxDb) : IBoxRegistrationSe
             IsApproved = r.IsApproved,
         });
     }
+
+    public async Task SaveRegistrationApproval(Guid registrationId, bool isApproved, string? decisionReason)
+    {
+        var registration = await _catBoxDb.BoxRegistrations.FindAsync(registrationId);
+        
+        if (registration == null)
+            throw new UserFriendlyException($"Box registration with id {registrationId} not found.");
+        
+        registration.IsApproved = isApproved;
+        registration.DecidedOn = DateTime.UtcNow;
+        registration.DecisionReason = decisionReason;
+        _catBoxDb.SaveChanges();
+    }
 }
