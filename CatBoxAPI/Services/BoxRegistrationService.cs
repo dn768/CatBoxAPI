@@ -52,11 +52,11 @@ public class BoxRegistrationService(CatBoxContext catBoxDb) : IBoxRegistrationSe
         return registration.Id;
     }
 
-    public async Task<IEnumerable<BoxRegistrationListItemDTO>> GetBoxRegistrationListAsync(bool? isApproved)
+    public async Task<IEnumerable<BoxRegistrationListItemDTO>> GetBoxRegistrationListAsync(bool filterByApproval, bool? approvalFilter)
     {
         var registrations = await _catBoxDb.BoxRegistrations
             .Include(r => r.Cat)
-            .Where(r => isApproved == null || r.IsApproved == isApproved)
+            .Where(r => !filterByApproval || r.IsApproved == approvalFilter)
             .ToListAsync();
 
         return registrations.Select(r => new BoxRegistrationListItemDTO()

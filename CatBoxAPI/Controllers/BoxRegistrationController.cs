@@ -58,12 +58,39 @@ namespace CatBoxAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BoxRegistrationListItemDTO>>> GetBoxRegistrationList([FromQuery] bool? isApproved)
+        public async Task<ActionResult<IEnumerable<BoxRegistrationListItemDTO>>> GetBoxRegistrationList([FromQuery] string? filter)
         {
-            // Using simpler filtering for this endpoint. Making the assumption for now that additional fields won't be useful to filter by
+            // Updated filter to be consistent with CatProfileController, since I'm letting the endpoint consumer use these 4 filter states:
+            // 1. No filter (all BoxResistrations returned)
+            // 2. Null filter (undecided BoxResistrations returned)
+            // 3. True filter (approved BoxResistrations returned)
+            // 4. False filter (rejected BoxResistrations returned)
+
+            // TODO: Consider using two seperate filters, in case the consumer wants to get all decided BoxResistration requests,
+            // whether approved or rejected
+
+            bool filterByApproval = false;
+            bool? approvalFilter = null;
+
+            if (!string.IsNullOrEmpty(filter?.Trim()))
+            {
+                filterByApproval = true;
+                if (!filter.Trim().StartsWith("approved", StringComparison.CurrentCultureIgnoreCase))
+                    return BadRequest($"Filter feature is provided only for approved state.");
+
+                if (filter.Trim().EndsWith("true", StringComparison.CurrentCultureIgnoreCase))
+                    approvalFilter = true;
+                else if (filter.Trim().EndsWith("false", StringComparison.CurrentCultureIgnoreCase))
+                    approvalFilter = false;
+                // Including else statement for readability, but the bool? was initialized to null
+                else
+                    approvalFilter = null;
+            }
+
+
             try
             {
-                return Ok(await boxRegistrationService.GetBoxRegistrationListAsync(isApproved));
+                return Ok(await boxRegistrationService.GetBoxRegistrationListAsync(filterByApproval, approvalFilter));
             }
             catch (Exception ex)
             {
